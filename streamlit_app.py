@@ -6,10 +6,9 @@ from typing import List, Dict, Any
 from pathlib import Path
 
 # Core libraries
-import chromadb
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain_community.document_loaders import PyPDFLoader
-from langchain_community.vectorstores import Chroma
+from langchain_community.vectorstores import FAISS
 from langchain_huggingface import HuggingFaceEmbeddings
 from langchain_groq import ChatGroq
 from langchain.schema import Document
@@ -101,11 +100,10 @@ def create_vector_store(pdf_files, _embeddings):
         )
         splits = text_splitter.split_documents(all_documents)
         
-        # Create vector store
-        vector_store = Chroma.from_documents(
+        # Create vector store using FAISS
+        vector_store = FAISS.from_documents(
             documents=splits,
-            embedding=_embeddings,
-            persist_directory=None  # In-memory storage
+            embedding=_embeddings
         )
         
         return vector_store
@@ -251,7 +249,7 @@ with st.sidebar:
         **Models Used:**
         - Embeddings: sentence-transformers/all-MiniLM-L6-v2
         - LLM: Gemma2-9b-It (via Groq)
-        - Vector Store: Chroma (in-memory)
+        - Vector Store: FAISS (in-memory)
         
         **Text Processing:**
         - Chunk Size: 5000 characters
